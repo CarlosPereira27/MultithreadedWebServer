@@ -37,7 +37,6 @@ public class MyHttpHandler implements HttpHandler {
 		if (file.exists() && file.isFile()) {
 			try {
 				t.sendResponseHeaders(200, file.length());
-				System.out.println("test");
 				Path path = file.toPath();
 				Files.copy(path, out);
 				out.flush();

@@ -7,7 +7,6 @@ import org.ufla.multithreadedwebserver.concurrent.MyThreadPoolExecutor;
 
 import com.sun.net.httpserver.HttpServer;
 
-//Artillery.io - testes de carga
 /**
  *
  * Responsável por configurar e inicializar o servidor web.
@@ -54,10 +53,11 @@ public class MultithreadedWebServer {
 	private static void debugServer() {
 		ServerConfiguration serverConfiguration = ServerConfiguration.getInstance();
 		System.out.printf(
-				"Servidor web executando na porta %d com um pool de threads com %d "
-						+ "threads e uma fila de tarefas com a capacidade máxima de %d tarefas.\n",
+				"Servidor web executando na porta %d.\nPool de threads de tamanho %d.\n"
+						+ "Fila de tarefas com a capacidade máxima de %d tarefas.\n"
+						+ "Diretório raiz para busca de recursos é '%s'\n",
 				serverConfiguration.getPortListener(), serverConfiguration.getPoolSize(),
-				serverConfiguration.getCapacityQueue());
+				serverConfiguration.getCapacityQueue(), rootDirectory);
 	}
 
 }
