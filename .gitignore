@@ -25,4 +25,4 @@ bin
 hs_err_pid*
 
 # Resources de teste
-dist/resources/SW
+# dist/resources/SW
