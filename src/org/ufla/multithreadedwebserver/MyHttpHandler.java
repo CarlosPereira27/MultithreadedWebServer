@@ -20,6 +20,7 @@ import com.sun.net.httpserver.HttpHandler;
  */
 public class MyHttpHandler implements HttpHandler {
 
+	@SuppressWarnings("unused")
 	private void debug(HttpExchange t) {
 		System.out.println(
 				"Thread '" + Thread.currentThread().getName() + "' tratando a requisição '" + t.getRequestURI() + "'");
@@ -30,7 +31,7 @@ public class MyHttpHandler implements HttpHandler {
 	 */
 	@Override
 	public void handle(HttpExchange t) throws IOException {
-		debug(t);
+//		debug(t);
 		t.getResponseHeaders().set("Content-Type", "text/html; charset=UTF-8");
 		OutputStream out = t.getResponseBody();
 		File file = new File(MultithreadedWebServer.rootDirectory + t.getRequestURI());

@@ -99,6 +99,7 @@ def testConfiguration(configuration):
     except urllib.error.HTTPError as e:
         if e.code != 404:
             print ('ERRO! %s' % str(e))
+            sys.exit(2)
     except Exception as e:
         print ('ERRO! %s' % str(e))
         sys.exit(2)
@@ -116,7 +117,6 @@ def makeRequests(begin, end, configuration, errorInd, errors):
 
 def main(argv):
     configuration = Configuration()
-    print (configuration.getURL())
     defineConfiguration(argv, configuration)
     testConfiguration(configuration)
     clients = []
@@ -128,9 +128,10 @@ def main(argv):
 
     for i in range(configuration.num_clients):
         clients[i].join()
-
-    print ("Demorou %f milissegundos para fazer %d vez(es) as requisições com %d clientes" % ((time.time() - startTime) * 1000, configuration.qty_request, configuration.num_clients))
-    print ("%d erros em requisições." % (sum(errors)))
+    timeTotal = int((time.time() - startTime) * 1000000)
+    print ("%ld,%d,%d,%d,%d" % (timeTotal, sum(errors), configuration.qty_request, configuration.num_clients, configuration.num_clients / 2), end='')
+    # print ("Demorou %f milissegundos para fazer %d vez(es) as requisições com %d clientes" % ((time.time() - startTime) * 1000, configuration.qty_request, configuration.num_clients))
+    # print ("%d erros em requisições." % (sum(errors)))
 
 if __name__ == "__main__":
     main(sys.argv[1:])
