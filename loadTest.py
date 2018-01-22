@@ -27,8 +27,7 @@ class ThreadClient (threading.Thread):
     def run(self):
         url = self.configuration.getURL()
         block = len(self.configuration.requests) // self.configuration.num_clients
-        begin = block * self.index
-        end = begin + block
+        end = block * (self.index + 1)
         if self.index == self.configuration.num_clients - 1:
             end = len(self.configuration.requests)
         for i in range(self.configuration.qty_request):
@@ -39,6 +38,7 @@ class ThreadClient (threading.Thread):
                 except Exception:
                     self.errors[self.index] += 1
                 j += 1
+
 
 def showHelpMessage():
     print ('Realiza teste de carga em um determinado servidor web.')
@@ -122,14 +122,26 @@ def main(argv):
     clients = []
     errors = [ 0 * configuration.num_clients ]
     startTime = time.time() 
-    for i in range(configuration.num_clients):
-        clients.append(ThreadClient(configuration, i, errors))
+    for i in range(configuration.num_clients - 1):
+        clients.append(ThreadClient(configuration, i + 1, errors))
         clients[i].start()
 
-    for i in range(configuration.num_clients):
+    # Thread principal é responsável pelo primeiro bloco de requisições.
+    url = configuration.getURL()
+    block = len(configuration.requests) // configuration.num_clients
+    for i in range(configuration.qty_request):
+        j = 0
+        while j < block:
+            try:
+                urllib.request.urlopen(url + "/" + configuration.requests[j])
+            except Exception:
+                errors[0] += 1
+            j += 1
+
+    for i in range(configuration.num_clients - 1):
         clients[i].join()
     timeTotal = int((time.time() - startTime) * 1000000)
-    print ("%ld,%d,%d,%d,%d" % (timeTotal, sum(errors), configuration.qty_request, configuration.num_clients, configuration.num_clients / 2), end='')
+    print ("%ld,%d,%d,%d" % (timeTotal, sum(errors), configuration.qty_request, configuration.num_clients), end='')
     # print ("Demorou %f milissegundos para fazer %d vez(es) as requisições com %d clientes" % ((time.time() - startTime) * 1000, configuration.qty_request, configuration.num_clients))
     # print ("%d erros em requisições." % (sum(errors)))
 
