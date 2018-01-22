@@ -28,7 +28,7 @@ turn_on_server=$6
 
 
 
-echo "Escrevendo script para ligar o servidor"
+echo "Escrevendo script para ligar o servidor '$turn_on_server'"
 
 echo "#!/bin/bash" > $turn_on_server
 echo "" >> $turn_on_server
@@ -36,5 +36,7 @@ echo 'echo "Executando o servidor ..."' >> $turn_on_server
 echo "" >> $turn_on_server
 echo "sudo su - $user_server" >> $turn_on_server
 echo "cd MultithreadedWebServer/dist" >> $turn_on_server
-echo 'echo "nohup java -jar multithreaded-web-server.jar -p $port -s $threads -c $cap_queue >> $log_file_server &"' >> $turn_on_server
-echo "nohup java -jar multithreaded-web-server.jar -p $port -s $threads -c $cap_queue >> $log_file_server &" >> $turn_on_server
+echo "echo \"nohup java -jar multithreaded-web-server.jar -p $port -s $threads -c $cap_queue >> $log_file_server &\"" >> $turn_on_server
+echo "sudo nohup java -jar multithreaded-web-server.jar -p $port -s $threads -c $cap_queue >> $log_file_server &" >> $turn_on_server
+
+sudo chmod +x $turn_on_server

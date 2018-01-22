@@ -5,13 +5,16 @@
 # --------------------------------------------------------
 
 # IP do host em que servidor estará executando
-host_ip="35.229.19.62"
+host_ip="35.229.23.61"
 
 # Porta em que servidor estará escutando
 port=80
 
 # Usuário que entrará no servidor via ssh
 user_ssh="carlos"
+
+# Caminho ssh chave privada
+ssh_private_key="~/.ssh/gcloud_ppd"
 
 # Usuário que instalou o servidor web em seu diretório
 user_server="carloshpereira27"
@@ -46,7 +49,7 @@ log_file_server="web_server.log"
 turn_on_server_script="turn_on_server.sh"
 
 # --------------------------------------------------------
-# ---------------- END Parâmetros ----------------------
+# ---------------- END Parâmetros ------------------------
 # --------------------------------------------------------
 
 
@@ -54,8 +57,10 @@ turn_on_server_script="turn_on_server.sh"
 echo "time,errors,qty_req,n_clients,nthreads,cap_queue,test_index" > $report_file
 for i in $(seq 0 $((${#threads[@]}-1))); do
     for j in $(seq 0 $((${#cap_queue[@]}-1))); do
-        ./writer_script_turn_on_server.sh $port ${threads[$i]} ${cap_queue[$j]} $log_file_server $user_server $turn_on_server_script
-        ssh $user_ssh@$host_ip 'bash -s' < $turn_on_server_script
+	echo "./writer_turn_on_server.sh $port ${threads[$i]} ${cap_queue[$j]} $log_file_server $user_server $turn_on_server_script"
+        ./writer_turn_on_server.sh $port ${threads[$i]} ${cap_queue[$j]} $log_file_server $user_server $turn_on_server_script
+       	echo "ssh -i $ssh_private_key $user_ssh@$host_ip 'bash -s' < $turn_on_server_script"
+	ssh -i $ssh_private_key $user_ssh@$host_ip 'bash -s' < $turn_on_server_script
         sleep 2
         for k in $(seq 0 $((${#qty_req[@]}-1))); do
             for l in $(seq 0 $((qty_test-1))); do
@@ -64,7 +69,8 @@ for i in $(seq 0 $((${#threads[@]}-1))); do
                 echo ",${cap_queue[$j]},$l" >> $report_file
             done
         done
-        ssh $user_ssh@$host_ip 'bash -s' < turn_off_server.sh
+	echo "ssh -i $ssh_private_key $user_ssh@$host_ip 'bash -s' < turn_off_server.sh"
+        ssh -i $ssh_private_key $user_ssh@$host_ip 'bash -s' < turn_off_server.sh
         echo "Servidor web finalizado."
         echo ""
         echo "-------------------------------------------------------------------------"
