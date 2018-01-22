@@ -25,12 +25,13 @@ user_server="carloshpereira27"
 threads=(1 2 3 4 6 8 10 12 16 20 24 28 32 40 48 56 64 72 80 88 96)
 # threads=(1 2 4)
 
+
 # Quantidade de vezes que serão realizadas as request da base de dados
 # de teste
 qty_req=(10 50 100)
 
 # Capacidade da fila de tarefas do servidor web
-cap_queue=(20 100 1000)
+cap_queue=(1000)
 
 # Quantidade de vezes que executará cada cenário de teste
 qty_test=10
