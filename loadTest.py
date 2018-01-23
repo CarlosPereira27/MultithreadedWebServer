@@ -12,9 +12,13 @@ class Configuration:
         self.port = 8008
         self.qty_request = 1
         self.num_clients = 1
+        self.leftover_request = 0
 
     def getURL(self):
         return "%s:%d" % (self.host, self.port)
+
+    def getQtyRequests(self):
+        return self.qty_request * self.num_clients + self.leftover_request
 
 class ThreadClient (threading.Thread):
 
@@ -24,20 +28,18 @@ class ThreadClient (threading.Thread):
         self.index = index
         self.errors = errors
 
-    def run(self):
+    def runRequests(self):
         url = self.configuration.getURL()
-        block = len(self.configuration.requests) // self.configuration.num_clients
-        end = block * (self.index + 1)
-        if self.index == self.configuration.num_clients - 1:
-            end = len(self.configuration.requests)
+        for request in self.configuration.requests:
+            try:
+                html = urllib.request.urlopen(url + "/" + request).read()
+            except Exception:
+                self.errors[self.index] += 1
+
+    def run(self):
         for i in range(self.configuration.qty_request):
-            j = block * self.index
-            while j < end:
-                try:
-                    urllib.request.urlopen(url + "/" + self.configuration.requests[j])
-                except Exception:
-                    self.errors[self.index] += 1
-                j += 1
+            self.runRequests()
+            
 
 
 def showHelpMessage():
@@ -104,20 +106,22 @@ def testConfiguration(configuration):
         print ('ERRO! %s' % str(e))
         sys.exit(2)
 
-def makeRequests(begin, end, configuration, errorInd, errors):
+def runRequests(configuration, errorInd, errors):
     url = configuration.getURL()
-    for i in range(configuration.qty_request):
-        j = begin
-        while j < end:
-            try:
-                urllib.request.urlopen(url + configuration.requests[j])
-            except Exception:
-                errors[errorInd] += 1
-            j += 1
+    for request in configuration.requests:
+        try:
+            urllib.request.urlopen(url + "/" + request)
+        except Exception:
+            self.errors[errorInd] += 1
+
+def defineQtyRequest(configuration):
+    configuration.leftover_request = configuration.qty_request % configuration.num_clients
+    configuration.qty_request = configuration.qty_request // configuration.num_clients
 
 def main(argv):
     configuration = Configuration()
     defineConfiguration(argv, configuration)
+    defineQtyRequest(configuration)
     testConfiguration(configuration)
     clients = []
     errors = [ 0 * configuration.num_clients ]
@@ -126,22 +130,13 @@ def main(argv):
         clients.append(ThreadClient(configuration, i + 1, errors))
         clients[i].start()
 
-    # Thread principal é responsável pelo primeiro bloco de requisições.
-    url = configuration.getURL()
-    block = len(configuration.requests) // configuration.num_clients
-    for i in range(configuration.qty_request):
-        j = 0
-        while j < block:
-            try:
-                urllib.request.urlopen(url + "/" + configuration.requests[j])
-            except Exception:
-                errors[0] += 1
-            j += 1
+    for i in range(configuration.qty_request + configuration.leftover_request):
+        runRequests(configuration, 0, errors)
 
     for i in range(configuration.num_clients - 1):
         clients[i].join()
     timeTotal = int((time.time() - startTime) * 1000000)
-    print ("%ld,%d,%d,%d" % (timeTotal, sum(errors), configuration.qty_request, configuration.num_clients), end='')
+    print ("%ld,%d,%d,%d" % (timeTotal, sum(errors), configuration.getQtyRequests(), configuration.num_clients), end='')
     # print ("Demorou %f milissegundos para fazer %d vez(es) as requisições com %d clientes" % ((time.time() - startTime) * 1000, configuration.qty_request, configuration.num_clients))
     # print ("%d erros em requisições." % (sum(errors)))
 

@@ -23,6 +23,7 @@ public class ArgsHandler {
 	private static final String POOL_SIZE = "--poll_size=";
 	private static final String POOL_SIZE_SIMPLE = "-s";
 	
+	@SuppressWarnings("unused")
 	private static final String LOG= "--log";
 	private static final String LOG_SIMPLE = "-l";
 

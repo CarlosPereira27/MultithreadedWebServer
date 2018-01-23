@@ -14,11 +14,11 @@ port=80
 # O teste de carga é feito sempre com o dobro de clientes em relação as
 # threads do servidor
 # threads=(1 2 3 4 6 8 10 12 16 20 24 28 32 40 48 56 64 72 80 88 96)
-threads=(1 2 4)
+threads=(2 4)
 
 # Quantidade de vezes que serão realizadas as request da base de dados
 # de teste
-qty_req=(10 50 100)
+qty_req=(100)
 
 # Capacidade da fila de tarefas do servidor web
 cap_queue=(1000)
@@ -52,8 +52,8 @@ for i in $(seq 0 $((${#threads[@]}-1))); do
         sleep 2
         for k in $(seq 0 $((${#qty_req[@]}-1))); do
             for l in $(seq 0 $((qty_test-1))); do
-                echo "python3 loadTest.py -o http://$host_ip -p $port -n ${qty_req[$k]} -c 1 -r $request_file >> $report_file"
-                python3 loadTest.py -o http://$host_ip -p $port -n ${qty_req[$k]} -c 1 -r $request_file >> $report_file
+                echo "python3 loadTest.py -o http://$host_ip -p $port -n ${qty_req[$k]} -c $((${threads[$i]})) -r $request_file >> $report_file"
+                python3 loadTest.py -o http://$host_ip -p $port -n ${qty_req[$k]} -c $((${threads[$i]})) -r $request_file >> $report_file
                 echo ",${threads[$i]},${cap_queue[$j]},$l" >> $report_file
             done
         done
