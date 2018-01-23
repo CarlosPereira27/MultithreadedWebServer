@@ -5,7 +5,7 @@
 # --------------------------------------------------------
 
 # IP do host em que servidor estará executando
-host_ip="35.229.23.61"
+host_ip="35.229.119.1"
 
 # Porta em que servidor estará escutando
 port=80
@@ -22,8 +22,7 @@ user_server="carloshpereira27"
 # Quantidade de threads do poll de threads do servidor web
 # O teste de carga é feito sempre com o dobro de clientes em relação as
 # threads do servidor
-threads=(1 2 3 4 6 8 10 12 16 20 24 28 32 40 48 56 64 72 80 88 96)
-# threads=(1 2 4)
+threads=(1 2 3 4 6 8 10 12 16 20 24 32 40)
 
 # Quantidade de vezes que serão realizadas as request da base de dados
 # de teste
@@ -34,7 +33,6 @@ cap_queue=(1000)
 
 # Quantidade de vezes que executará cada cenário de teste
 qty_test=10
-# qty_test=1
 
 # Nome do arquivo, onde o relatório será escrito
 report_file="report.csv"
@@ -44,6 +42,9 @@ request_file="dist/resources_request.txt"
 
 # Nome do arquivo que armazenará o log do servidor
 log_file_server="web_server.log"
+
+# Quantos clientes que ser�o simulados no script que realiza as requisições
+clients=8
 
 # Nome do script gerado para ligar o servidor web
 turn_on_server_script="turn_on_server.sh"
@@ -64,8 +65,8 @@ for i in $(seq 0 $((${#threads[@]}-1))); do
         sleep 2
         for k in $(seq 0 $((${#qty_req[@]}-1))); do
             for l in $(seq 0 $((qty_test-1))); do
-                echo "python3 loadTest.py -o http://$host_ip -p $port -n ${qty_req[$k]} -c $((${threads[$i]}*2)) -r $request_file >> $report_file"
-                python3 loadTest.py -o http://$host_ip -p $port -n ${qty_req[$k]} -c $((${threads[$i]}*2)) -r $request_file >> $report_file
+                echo "python3 loadTest.py -o http://$host_ip -p $port -n ${qty_req[$k]} -c $clients -r $request_file >> $report_file"
+                python3 loadTest.py -o http://$host_ip -p $port -n ${qty_req[$k]} -c $clients -r $request_file >> $report_file
                 echo ",${threads[$i]},${cap_queue[$j]},$l" >> $report_file
             done
         done

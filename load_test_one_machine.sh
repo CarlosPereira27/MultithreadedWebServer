@@ -13,8 +13,8 @@ port=80
 # Quantidade de threads do poll de threads do servidor web
 # O teste de carga é feito sempre com o dobro de clientes em relação as
 # threads do servidor
-# threads=(1 2 3 4 6 8 10 12 16 20 24 28 32 40 48 56 64 72 80 88 96)
-threads=(2 4)
+threads=(1 2 3 4 6 8 10 12 16 20 24 32 40)
+# threads=(2 4)
 
 # Quantidade de vezes que serão realizadas as request da base de dados
 # de teste
@@ -24,8 +24,7 @@ qty_req=(100)
 cap_queue=(1000)
 
 # Quantidade de vezes que executará cada cenário de teste
-# qty_test=10
-qty_test=1
+qty_test=10
 
 # Nome do arquivo, onde o relatório será escrito
 report_file="report.csv"

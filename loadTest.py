@@ -3,6 +3,7 @@ import os.path
 import sys, getopt
 import time
 import threading
+import multiprocessing
 
 class Configuration:
 
@@ -91,6 +92,8 @@ def defineConfiguration(argv, configuration):
             configuration.qty_request = validIntegerPositive('qty_each_request', arg)
         elif opt in ("-c", "--num_clients"):
             configuration.num_clients = validIntegerPositive('num_clients', arg)
+            if configuration.num_clients > multiprocessing.cpu_count():
+                 configuration.num_clients = multiprocessing.cpu_count()
 
 def testConfiguration(configuration):
     if not configuration.requests:
