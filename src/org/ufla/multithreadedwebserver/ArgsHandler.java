@@ -22,6 +22,9 @@ public class ArgsHandler {
 	private static final String POOL_SIZE_ID = "Tamanho do pool de threads (-s | --poll_size)";
 	private static final String POOL_SIZE = "--poll_size=";
 	private static final String POOL_SIZE_SIMPLE = "-s";
+	
+	private static final String LOG= "--log";
+	private static final String LOG_SIMPLE = "-l";
 
 	private static final String HELP = "--help";
 	private static final String HELP_SIMPLE = "-h";
@@ -29,6 +32,7 @@ public class ArgsHandler {
 			+ "-p --port=PORT                Porta em que o servidor está ouvindo\n"
 			+ "-c --queue_capacity=CAPACITY  Capacidade máxima da fila de tarefas\n"
 			+ "-s --poll_size=SIZE           Tamanho do pool de threads\n"
+			+ "-l --log                      Ativa o log das requisições\n"
 			+ "-h --help                     Imprime mensagem de ajuda\n";
 	
 	/**
@@ -117,6 +121,10 @@ public class ArgsHandler {
 			} else if (args[i].equals(POOL_SIZE)) {
 				configuration
 						.setPoolSize(validIntegerPositive(CAPACITY_QUEUE_ID, args[i].substring(POOL_SIZE.length())));
+			} else if (args[i].equals(LOG)) {
+				configuration.setLog(true);
+			} else if (args[i].equals(LOG_SIMPLE)) {
+				configuration.setLog(true);
 			} else if (args[i].startsWith("-")) {
 				throw new Exception(String.format("Opção não reconhecida '%s'", args[i]));
 			}

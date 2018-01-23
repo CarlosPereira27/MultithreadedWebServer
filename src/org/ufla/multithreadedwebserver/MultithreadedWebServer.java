@@ -39,6 +39,7 @@ public class MultithreadedWebServer {
 			System.out.println(e.getMessage());
 			System.out.println();
 			ArgsHandler.showHelpMessage();
+			System.exit(2);
 		}
 		HttpServer server = HttpServer.create(new InetSocketAddress(serverConfiguration.getPortListener()), 0);
 		Executor executor = new MyThreadPoolExecutor(serverConfiguration.getPoolSize(),
@@ -46,11 +47,11 @@ public class MultithreadedWebServer {
 		server.createContext("/", new MyHttpHandler());
 		server.setExecutor(executor);
 		server.start();
-		debugServer();
+		log();
 
 	}
 
-	private static void debugServer() {
+	private static void log() {
 		ServerConfiguration serverConfiguration = ServerConfiguration.getInstance();
 		System.out.printf(
 				"Servidor web executando na porta %d.\nPool de threads de tamanho %d.\n"

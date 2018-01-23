@@ -23,6 +23,11 @@ public class ServerConfiguration {
 	 */
 	private int poolSize = 3;
 	/**
+	 * Determina se o servidor deve realizar o log dos 
+	 * tratamentos de requisições ou não.
+	 */
+	private boolean log = false;
+	/**
 	 * Instância da configuração do servidor.
 	 */
 	private static ServerConfiguration serverConfiguration;
@@ -31,6 +36,7 @@ public class ServerConfiguration {
 		portListener = 8008;
 		capacityQueue = 10;
 		poolSize = 3;
+		log = false;
 	}
 
 	/**
@@ -43,6 +49,15 @@ public class ServerConfiguration {
 			serverConfiguration = new ServerConfiguration();
 		}
 		return serverConfiguration;
+	}
+	
+	/**
+	 * Verifica se o modo de log está ativado ou desativado.
+	 * 
+	 * @return true, se o modo de log está ativado ou false, caso contrário
+	 */
+	public static boolean onLog() {
+		return getInstance().isLog();
 	}
 
 	public int getPortListener() {
@@ -67,6 +82,14 @@ public class ServerConfiguration {
 
 	public void setPoolSize(int poolSize) {
 		this.poolSize = poolSize;
+	}
+	
+	public boolean isLog() {
+		return log;
+	}
+
+	public void setLog(boolean log) {
+		this.log = log;
 	}
 
 }
