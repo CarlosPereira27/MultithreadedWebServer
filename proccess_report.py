@@ -13,7 +13,7 @@ import numpy as np
 # --------------------------------------------------------
 
 # Arquivo do relatório gerado
-report_files = [ "report_gcloud_ssh_com.csv" ]
+report_files = [ "reports/gcloud/report_gcloud_ssh_com.csv" ]
 
 # Quantidade de testes realizados
 qty_tests = 10
