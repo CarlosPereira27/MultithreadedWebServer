@@ -6,6 +6,9 @@ import threading
 import multiprocessing
 
 class Configuration:
+    """
+    Represent a configuração de um teste de carga.
+    """
 
     def __init__(self):
         self.requests = []
@@ -16,20 +19,45 @@ class Configuration:
         self.leftover_request = 0
 
     def getURL(self):
+        """
+        Recupera a URL completa do host a ser requisitado (URL e porta da aplicação)
+        """
         return "%s:%d" % (self.host, self.port)
 
     def getQtyRequests(self):
+        """
+        Recupera a quantidade total de request que será realizada, incluindo todos
+        clientes emulados.
+        """
         return self.qty_request * self.num_clients + self.leftover_request
 
 class ThreadClient (threading.Thread):
+    """
+    Representa um cliente na hora dos testes de carga.
+    """
 
     def __init__(self, configuration, index, errors):
+        """
+        Construtor de um cliente de teste de carga
+
+        @param configuration : Configuration
+            configuração do teste de carga a ser realizado
+        @param index : int
+            índice da thread cliente e que marcará os erros ocorridos na 
+            lista de erros
+        @param errors : list<int>
+            lista de quantidade de erros ocorridos
+        """
         threading.Thread.__init__(self)
         self.configuration = configuration
         self.index = index
         self.errors = errors
 
     def runRequests(self):
+        """
+        Executa as requisições dos recursos definidos no arquivo de recursos
+        da configuração.
+        """
         url = self.configuration.getURL()
         for request in self.configuration.requests:
             try:
@@ -38,12 +66,20 @@ class ThreadClient (threading.Thread):
                 self.errors[self.index] += 1
 
     def run(self):
+        """
+        Executa todas requisições desse cliente. São as requisições dos recursos 
+        definidos no arquivo de recursos da configuração multiplicado pela 
+        self.configuration.qty_request.
+        """
         for i in range(self.configuration.qty_request):
             self.runRequests()
             
 
 
 def showHelpMessage():
+    """
+    Mostra a mensagem de ajuda para o usuário
+    """
     print ('Realiza teste de carga em um determinado servidor web.')
     print ('python loadTest.py -r <request_file> -o <host> -p <port> -n <qty_each_request> -c <num_clients>')
     print ('')
@@ -54,19 +90,40 @@ def showHelpMessage():
     print ('-n --qty_each_request=QTY_EACH_REQUEST   Quantidade de requisições para cada recurso. Padrão: 1')
     print ('-c --num_clients=NUM_CLIENTS             Quantidade de clientes fazendo requisições. Padrão: 1')
 
-def validIntegerPositive(attrName, value):
-    valueInt = 0;
+def validIntegerPositive(attr_name, value):
+    """
+    Válida se o valor de um atributo é um inteiro positivo.
+    Se é inteiro positivo retorna o valor, caso contrário encerra a aplicação com erro.
+
+    @param attr_name : str
+        nome do atributo a ser validado
+    @param value : str:
+        valor do atributo em string
+
+    @return
+        se o valor é um inteiro positivo retorna o valor, caso contrário encerra a 
+        aplicação com erro
+    """
+    value_int = 0;
     try:
-        valueInt = int(value)
-        if valueInt < 0:
-            print("%s deve ser um " + "número inteiro positivo (valor associado = %s)." % (attrName, value))
+        value_int = int(value)
+        if value_int < 0:
+            print("%s deve ser um " + "número inteiro positivo (valor associado = %s)." % (attr_name, value))
             sys.exit(2)
     except ValueError:
-        print("%s deve ser um " + "número inteiro positivo (valor associado = %s)." % (attrName, value))
+        print("%s deve ser um " + "número inteiro positivo (valor associado = %s)." % (attr_name, value))
         sys.exit(2)
-    return valueInt
+    return value_int
 
 def defineConfiguration(argv, configuration):
+    """
+    Define a configuração do teste de carga a partir dos argumentos da aplicação.
+
+    @param argv : list<str>
+        lista de argumentos da aplicação
+    @param configuration : Configuration
+        configuração do teste de carga a ser realizado
+    """
     try:
         opts, args = getopt.getopt(argv,"hr:o:p:n:c:",["request_file=", "host=", "port=", "qty_each_request=", "num_clients="])
     except getopt.GetoptError:
@@ -96,6 +153,13 @@ def defineConfiguration(argv, configuration):
                  configuration.num_clients = multiprocessing.cpu_count()
 
 def testConfiguration(configuration):
+    """
+    Testa se uma configuração de teste de carga é válida.
+    Se não é válida encerra a aplicação.
+
+    @param configuration : Configuration
+        configuração do teste de carga a ser realizado
+    """
     if not configuration.requests:
         print ('ERRO! Arquivo de requisições não contém nenhum recurso a ser requisitado!')
         sys.exit(2)
@@ -109,15 +173,33 @@ def testConfiguration(configuration):
         print ('ERRO! %s' % str(e))
         sys.exit(2)
 
-def runRequests(configuration, errorInd, errors):
+def runRequests(configuration, error_ind, errors):
+    """
+    Executa as request da thread principal.
+
+    @param configuration : Configuration
+        configuração do teste de carga a ser realizado
+    @param error_ind : int
+        índice que marcará os erros ocorridos na lista de erros
+    @param errors : list<int>
+        lista de quantidade de erros ocorridos
+    """
     url = configuration.getURL()
     for request in configuration.requests:
         try:
             urllib.request.urlopen(url + "/" + request)
         except Exception:
-            self.errors[errorInd] += 1
+            self.errors[error_ind] += 1
 
 def defineQtyRequest(configuration):
+    """
+    Calcula a quantidade de requisição que cada thread deverá fazer da base
+    de dados, com base na quantidade de vezes que o usuário quer realizar de
+    requisições na base e na quantidade de usuário que pretende emular.
+
+    @param configuration : Configuration
+        configuração do teste de carga a ser realizado
+    """
     configuration.leftover_request = configuration.qty_request % configuration.num_clients
     configuration.qty_request = configuration.qty_request // configuration.num_clients
 
@@ -128,7 +210,7 @@ def main(argv):
     testConfiguration(configuration)
     clients = []
     errors = [ 0 * configuration.num_clients ]
-    startTime = time.time() 
+    start_time = time.time() 
     for i in range(configuration.num_clients - 1):
         clients.append(ThreadClient(configuration, i + 1, errors))
         clients[i].start()
@@ -138,8 +220,8 @@ def main(argv):
 
     for i in range(configuration.num_clients - 1):
         clients[i].join()
-    timeTotal = int((time.time() - startTime) * 1000000)
-    print ("%ld,%d,%d,%d" % (timeTotal, sum(errors), configuration.getQtyRequests(), configuration.num_clients), end='')
+    time_total = int((time.time() - start_time) * 1000000)
+    print ("%ld,%d,%d,%d" % (time_total, sum(errors), configuration.getQtyRequests(), configuration.num_clients), end='')
     # print ("Demorou %f milissegundos para fazer %d vez(es) as requisições com %d clientes" % ((time.time() - startTime) * 1000, configuration.qty_request, configuration.num_clients))
     # print ("%d erros em requisições." % (sum(errors)))
 
