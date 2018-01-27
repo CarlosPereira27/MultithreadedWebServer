@@ -7,7 +7,7 @@ import java.util.concurrent.Executor;
 
 /**
  * Responsável por escutar as requisições HTTP requisitadas neste servidor e
- * submete-las para que um executor trate essas requisições.
+ * submetê-las para que um executor trate essas requisições.
  * 
  * @author andre
  * @author caio

@@ -5,7 +5,7 @@
 # --------------------------------------------------------
 
 # IP do host em que servidor estará executando
-host_ip="35.229.119.1"
+host_ip="35.196.147.187"
 
 # Porta em que servidor estará escutando
 port=80
@@ -26,7 +26,7 @@ threads=(1 2 3 4 6 8 10 12 16 20 24 32 40)
 
 # Quantidade de vezes que serão realizadas as request da base de dados
 # de teste
-qty_req=(100)
+qty_req=(96)
 
 # Capacidade da fila de tarefas do servidor web
 cap_queue=(1000)
@@ -43,8 +43,8 @@ request_file="dist/resources_request.txt"
 # Nome do arquivo que armazenará o log do servidor
 log_file_server="web_server.log"
 
-# Quantos clientes que ser�o simulados no script que realiza as requisições
-clients=8
+# Quantos clientes que serão simulados no script que realiza as requisições
+clients=48
 
 # Nome do script gerado para ligar o servidor web
 turn_on_server_script="turn_on_server.sh"
