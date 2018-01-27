@@ -1,0 +1,18 @@
+No computador cliente:
+    1 - entrar no usuário carlos com o comando 
+        sudo su - carlos
+    2 - atualizar arquivo 'load_test_ssh.sh' com o ip do servidor.
+    3 - adicionar ssh com os comandos:
+        eval $(ssh-agent -s)
+        ssh-add ~/.ssh/gcloud_ppd
+    4 - testar se ssh está funcionando sem pedir senhas com o comando
+        ssh carlos@<ip_servidor>
+    5 - executar script de testes
+        nohup ./load_test_ssh.sh >> client.log &
+    6 - verificar log dos testes, com o comando:
+        tail -f client.log
+    
+No computador servidor:
+    1 - parar serviço apache2
+        sudo service apache2 stop
+    
