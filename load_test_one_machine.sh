@@ -35,6 +35,9 @@ request_file="dist/resources_request.txt"
 # Nome do arquivo que armazenará o log do servidor
 log_file_server="web_server.log"
 
+# Aplicação python para teste de carga.
+python_load_test_app=load_test.py
+
 # --------------------------------------------------------
 # ---------------- END Parâmetros ------------------------
 # --------------------------------------------------------
@@ -48,11 +51,13 @@ for i in $(seq 0 $((${#threads[@]}-1))); do
         sudo nohup java -jar multithreaded-web-server.jar -p $port -s ${threads[$i]} -c ${cap_queue[$j]} >> $log_file_server &
         server_pid=$!
         cd ..
+        echo "sleep 2"
         sleep 2
+        echo "sleep 2 FIM"
         for k in $(seq 0 $((${#qty_req[@]}-1))); do
             for l in $(seq 0 $((qty_test-1))); do
-                echo "python3 loadTest.py -o http://$host_ip -p $port -n ${qty_req[$k]} -c $((${threads[$i]})) -r $request_file >> $report_file"
-                python3 loadTest.py -o http://$host_ip -p $port -n ${qty_req[$k]} -c $((${threads[$i]})) -r $request_file >> $report_file
+                echo "python3 $python_load_test_app -o http://$host_ip -p $port -n ${qty_req[$k]} -c $((${threads[$i]})) -r $request_file >> $report_file"
+                python3 $python_load_test_app -o http://$host_ip -p $port -n ${qty_req[$k]} -c $((${threads[$i]})) -r $request_file >> $report_file
                 echo ",${threads[$i]},${cap_queue[$j]},$l" >> $report_file
             done
         done

@@ -49,6 +49,9 @@ clients=48
 # Nome do script gerado para ligar o servidor web
 turn_on_server_script="turn_on_server.sh"
 
+# Aplicação python para teste de carga.
+python_load_test_app=load_test.py
+
 # --------------------------------------------------------
 # ---------------- END Parâmetros ------------------------
 # --------------------------------------------------------
@@ -65,8 +68,8 @@ for i in $(seq 0 $((${#threads[@]}-1))); do
         sleep 2
         for k in $(seq 0 $((${#qty_req[@]}-1))); do
             for l in $(seq 0 $((qty_test-1))); do
-                echo "python3 loadTest.py -o http://$host_ip -p $port -n ${qty_req[$k]} -c $clients -r $request_file >> $report_file"
-                python3 loadTest.py -o http://$host_ip -p $port -n ${qty_req[$k]} -c $clients -r $request_file >> $report_file
+                echo "python3 $python_load_test_app -o http://$host_ip -p $port -n ${qty_req[$k]} -c $clients -r $request_file >> $report_file"
+                python3 $python_load_test_app -o http://$host_ip -p $port -n ${qty_req[$k]} -c $clients -r $request_file >> $report_file
                 echo ",${threads[$i]},${cap_queue[$j]},$l" >> $report_file
             done
         done
