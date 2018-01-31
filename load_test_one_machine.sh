@@ -35,6 +35,9 @@ request_file="dist/resources_request.txt"
 # Nome do arquivo que armazenará o log do servidor
 log_file_server="web_server.log"
 
+# Quantos clientes que serão simulados no script que realiza as requisições
+clients=8
+
 # Aplicação python para teste de carga.
 python_load_test_app=load_test.py
 
@@ -56,8 +59,8 @@ for i in $(seq 0 $((${#threads[@]}-1))); do
         echo "sleep 2 FIM"
         for k in $(seq 0 $((${#qty_req[@]}-1))); do
             for l in $(seq 0 $((qty_test-1))); do
-                echo "python3 $python_load_test_app -o http://$host_ip -p $port -n ${qty_req[$k]} -c $((${threads[$i]})) -r $request_file >> $report_file"
-                python3 $python_load_test_app -o http://$host_ip -p $port -n ${qty_req[$k]} -c $((${threads[$i]})) -r $request_file >> $report_file
+                echo "python3 $python_load_test_app -o http://$host_ip -p $port -n ${qty_req[$k]} -c $clients -r $request_file >> $report_file"
+                python3 $python_load_test_app -o http://$host_ip -p $port -n ${qty_req[$k]} -c $clients -r $request_file >> $report_file
                 echo ",${threads[$i]},${cap_queue[$j]},$l" >> $report_file
             done
         done

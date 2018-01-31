@@ -26,7 +26,7 @@ threads=(1 2 3 4 6 8 10 12 16 20 24 32 40)
 
 # Quantidade de vezes que serão realizadas as request da base de dados
 # de teste
-qty_req=(96)
+qty_req=(100)
 
 # Capacidade da fila de tarefas do servidor web
 cap_queue=(1000)
@@ -44,7 +44,7 @@ request_file="dist/resources_request.txt"
 log_file_server="web_server.log"
 
 # Quantos clientes que serão simulados no script que realiza as requisições
-clients=48
+clients=8
 
 # Nome do script gerado para ligar o servidor web
 turn_on_server_script="turn_on_server.sh"

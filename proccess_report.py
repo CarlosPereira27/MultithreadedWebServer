@@ -7,13 +7,15 @@ import os
 import matplotlib.pyplot as plt
 import matplotlib
 import numpy as np
+import math
 
 # --------------------------------------------------------
 # ---------------- BEGIN Parâmetros ----------------------
 # --------------------------------------------------------
 
 # Arquivo do relatório gerado
-report_files = [ "reports/gcloud_48clients/report.csv" ]
+report_files = [ "reports/gcloud/report_gcloud_ssh_com.csv", \
+"reports/gcloud_48clients/report.csv" ]
 
 # Quantidade de testes realizados
 qty_tests = 10
@@ -93,6 +95,35 @@ def plotChart(filename, xdata, ydata, xlabel, ylabel):
     plt.ylabel(ylabel)
     plt.savefig(os.path.join(filename + ".png"), dpi=300)
     plt.gcf().clear()
+
+def plotChartGeneralIdealLine(filename, xdata, ydata, \
+        xlabel, ylabel, yideal):
+    """
+    Desenha um gráfico com quatro linhas para valores de y diferente e insere suas legendas.
+
+    @param filename : str
+        nome do arquivo em que o gráfico será salvo
+    @param xdata : list
+        dados do eixo x
+    @param ydata : list
+        dados do eixo y, linha 0 
+    @param leg : str
+        legenda para a linha 0
+    @param xlabel : str
+        rótulo do eixo x
+    @param ylabel : str
+        rótulo do eixo y
+    """
+    lw_val = 3
+    mew_val = 4
+    line0, = plt.plot(xdata, ydata, 'bo-', lw = lw_val, mew = mew_val)
+    line1, = plt.plot(xdata, yideal, 'k--', lw = 2.2, mew = 0, label="ideal")
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.legend(handles=[line1]);
+    plt.savefig(os.path.join(filename + ".png"), dpi=300)
+    plt.gcf().clear()
+
 
 class Report:
     """
@@ -254,13 +285,23 @@ class Report:
         @param out_files_suffix : list<str>
             lista de sufixos para planilhas de cada tipo de tempo analisado
         """
+        speedup_ideal = []
+        efficiency_ideal = []
+        for nthread in self.nthreads:
+            speedup_ideal.append(nthread)
+        for i in range(len(self.nthreads)):
+            efficiency_ideal.append(1)
         for i in range(self.qty_times):
+            log_time_mean = []
+            N = len(self.time_mean[i])
+            for l in range(N):
+                log_time_mean.append(math.log(self.time_mean[i][l]))
             plotChart(pathfile[:-4] + "_" + out_files_suffix[i] + "_mean", self.nthreads, \
-                self.time_mean[i], "nthreads", "tempo")
-            plotChart(pathfile[:-4] + "_" + out_files_suffix[i] + "_speedup", self.nthreads, \
-                self.speedup[i], "nthreads", "speedup")
-            plotChart(pathfile[:-4] + "_" + out_files_suffix[i] + "_efficiency", \
-                self.nthreads, self.efficiency[i], "nthreads", "eficiência")
+                log_time_mean, "nthreads", "log(tempo)")
+            plotChartGeneralIdealLine(pathfile[:-4] + "_" + out_files_suffix[i] + "_speedup", \
+                self.nthreads, self.speedup[i], "nthreads", "speedup", speedup_ideal)
+            plotChartGeneralIdealLine(pathfile[:-4] + "_" + out_files_suffix[i] + "_efficiency", \
+                self.nthreads, self.efficiency[i], "nthreads", "eficiência", efficiency_ideal)
 
 def main(argv):
     qty_times = 1
