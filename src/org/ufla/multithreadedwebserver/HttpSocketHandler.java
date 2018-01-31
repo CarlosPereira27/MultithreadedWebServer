@@ -123,8 +123,8 @@ public class HttpSocketHandler implements Runnable {
 				out.write(HTTP_METHOD_NOT_SUPPORTED_MSG.toCharArray());
 			}
 		} catch (IOException e) {
-			System.err.println("Erro de E/S no socket.");
-			System.err.println(e.getMessage());
+			// System.err.println("Erro de E/S no socket.");
+			// System.err.println(e.getMessage());
 		} finally {
 			try {
 				out.flush();

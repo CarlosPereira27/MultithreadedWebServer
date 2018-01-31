@@ -26,6 +26,9 @@ critical_value_z = 1.96
 # Sufixos dos tempos salvos
 out_files_suffix = [ "time" ]
 
+lw_val = 3
+mew_val = 4
+
 # --------------------------------------------------------
 # ---------------- END Parâmetros ------------------------
 # --------------------------------------------------------
@@ -90,13 +93,13 @@ def plotChart(filename, xdata, ydata, xlabel, ylabel):
     @param ylabel : str
         rótulo do eixo y
     """
-    plt.plot(xdata, ydata, 'bo-', lw = 3, mew = 5)
+    plt.plot(xdata, ydata, 'bo-', lw = lw_val, mew = mew_val)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.savefig(os.path.join(filename + ".png"), dpi=300)
     plt.gcf().clear()
 
-def plotChartGeneralIdealLine(filename, xdata, ydata, \
+def plotChartIdealLine(filename, xdata, ydata, \
         xlabel, ylabel, yideal):
     """
     Desenha um gráfico com quatro linhas para valores de y diferente e insere suas legendas.
@@ -114,8 +117,6 @@ def plotChartGeneralIdealLine(filename, xdata, ydata, \
     @param ylabel : str
         rótulo do eixo y
     """
-    lw_val = 3
-    mew_val = 4
     line0, = plt.plot(xdata, ydata, 'bo-', lw = lw_val, mew = mew_val)
     line1, = plt.plot(xdata, yideal, 'k--', lw = 2.2, mew = 0, label="ideal")
     plt.xlabel(xlabel)
@@ -298,9 +299,9 @@ class Report:
                 log_time_mean.append(math.log(self.time_mean[i][l]))
             plotChart(pathfile[:-4] + "_" + out_files_suffix[i] + "_mean", self.nthreads, \
                 log_time_mean, "nthreads", "log(tempo)")
-            plotChartGeneralIdealLine(pathfile[:-4] + "_" + out_files_suffix[i] + "_speedup", \
+            plotChartIdealLine(pathfile[:-4] + "_" + out_files_suffix[i] + "_speedup", \
                 self.nthreads, self.speedup[i], "nthreads", "speedup", speedup_ideal)
-            plotChartGeneralIdealLine(pathfile[:-4] + "_" + out_files_suffix[i] + "_efficiency", \
+            plotChartIdealLine(pathfile[:-4] + "_" + out_files_suffix[i] + "_efficiency", \
                 self.nthreads, self.efficiency[i], "nthreads", "eficiência", efficiency_ideal)
 
 def main(argv):
